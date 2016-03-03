@@ -19,12 +19,12 @@ Other than this I like tinkering with electronic circuits and making small robot
 #Programming Details
 
 ##Platform and Text Editor Used
-I use both **Mac OS X** and **Ubuntu 14.04 LTS** as my work machines.
+I use both **Mac OS X** and **Ubuntu 14.04 LTS** as my work machines. 
 I use **Sublime Text 3** as my primary text editor because of its functionality, user-friendly nature and the useful packages which can be installed on it.
 Sometimes I also use vim.
 
 ##Programming Experience
-I have been using C and C++ since the past one year and python since past 4 months.
+I have been using C and C++ since the past one year and python since past 4 months. 
 
 Apart from these I also do web programming so I have used Javascript,PHP with SQL for databases.I contribute to mozilla's open source project 'wptview' which is a web app for displaying results of web-platform-tests.
 
@@ -44,7 +44,7 @@ I was introduced to SymEngine in mid-December 2015 and I have been contributing 
 
 3.[PR #727](https://github.com/symengine/symengine/pull/727)(**Merged**) - Added an additional compiling test for Travis with the latest gcc and g++ compiler(version 5.2 for both when I did this) so that new warnings coming up from these can be fixed.
 
-4.[PR #736](https://github.com/symengine/symengine/pull/736)(**Pending**) - Adds two new functions, one for finding quadratic residues and second for checking if a number is a quadratic residue of another .Added tests for both. Also fixed variable names in another function which were causing ambiguity. This led to an issue for checking Integer overflows.
+4.[PR #736](https://github.com/symengine/symengine/pull/736)(**Unmerged**) - Adds two new functions, one for finding quadratic residues and second for checking if a number is a quadratic residue of another .Added tests for both. Also fixed variable names in another function which were causing ambiguity. This led to an issue for checking Integer overflows.
 
 4.[PR #758](https://github.com/symengine/symengine/pull/758)(**Merged**) - Removed some redundant code left by another Developer's PR.
 
@@ -58,12 +58,20 @@ I was introduced to SymEngine in mid-December 2015 and I have been contributing 
 
 9.[PR #807](https://github.com/symengine/symengine/pull/736)(**Merged**) - Improved and fixed functions of `Polygamma` class and added tests for the same.
 
-10.[PR #815](https://github.com/symengine/symengine/pull/815)(**Pending**) - Add a cmake switch to prevent `Catch` from catching exceptions so that stacktraces can be obtained from `Teuchos`.
+10.[PR #815](https://github.com/symengine/symengine/pull/815)(**Unmerged**) - Add a cmake switch to prevent `Catch` from catching exceptions so that stacktraces can be obtained from `Teuchos`.
 
-11.[PR #835](https://github.com/symengine/symengine/pull/835)(**Pending**) - Improves the `abs` functions so that it can handle `Complex` and  also `abs(x-y)` is treated as equal to `abs(y-x)`
+11.[PR #835](https://github.com/symengine/symengine/pull/835)(**Unmerged**) - Improves the `abs` functions so that it can handle `Complex` and  also `abs(x-y)` is treated as equal to `abs(y-x)`
 
 
 - I also try to review some less complicated PRs and follow the discussions on others. This has helped me learn a lot of new stuff.
+
+#Contributions to SymPy
+
+1.[PR #10714](https://github.com/sympy/sympy/pull/10714)(**Unmerged**) - Added complete functionality for Inverse hyperbolic function `acsch`.Added Tests.
+
+2.[PR #10721](https://github.com/sympy/sympy/pull/10721)(**Unmerged**) - Fixed typo in documentation of `asech` function.
+
+3.[Issue #10717](https://github.com/sympy/sympy/issues/10717)(**Open**) - Issue about missing `acsch` function which I fix in [PR #10714](https://github.com/sympy/sympy/pull/10714).
 
 #The Project
 
@@ -97,9 +105,9 @@ For polynomial factorisation there are well written wiki pages on [Polynomial Fa
 
 ##Time during and after Summers
 
-I have no other commitments this summer. So I'll be able to give a full 50 hours or more per week.
+I have no other commitments this summer. So I'll be able to give a full 50 hours or more per week. 
 
-My summer break starts from 30th April so I can start working full time from that day on. I'll not be taking any vacations.
+My summer break starts from 30th April so I can start working full time from that day on. I'll not be taking any vacations. 
 
 My classes start around mid-July. That might reduce the time given during weekdays but I'll try to compensate on weekends.
 
