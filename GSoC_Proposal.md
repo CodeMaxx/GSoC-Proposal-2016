@@ -108,13 +108,13 @@ I also already have a pretty good bonding with the community.
 
 ##Previous Implementations
 
-Currently SymEngine has a `UnivariatePolynomial` class which has support for basic algebraic computations such as addition, subtraction and multiplication of Polynomials. Its just at the beginning stage and there is still a long way to go before the module is complete.<br/>
-Regarding Sets there is only a basic implementation of Intervals which got added very recently.
+Currently SymEngine has a `UnivariatePolynomial` class which has support for basic algebraic computations such as addition, subtraction and multiplication of Polynomials. It's just at the beginning stage and there is still a long way to go before the module is complete.<br/>
+Regarding Sets there is only a basic implementation of Intervals which got added very recently with [this](https://github.com/symengine/symengine/pull/846) PR in which I helped in reviewing.
 
 SymPy on the other hand has a very robust Polynomial Manipulation Module and a flexible Sets module. These would act as a good reference since these are very well documented.[[1](http://docs.sympy.org/latest/modules/solvers/solvers.html)][[2](http://docs.sympy.org/latest/modules/sets.html)]<br/>
 For Infinity class, there is a reference of [Pynac's Infinity class](https://github.com/pynac/pynac/blob/master/ginac/infinity.cpp).
 <br/>
-For Polynomial Manipulation also SymPy will act as a good reference but for understanding the algorithms my best friend will be the [Modern Computer Algebra](https://drive.google.com/file/d/0BzO2PqynA0ihbmZKLWdLenkyX00/view?pref=2&pli=1) Book.
+For Polynomial Manipulation also SymPy will act as a good reference but for understanding the algorithms my best friend will be the Modern Computer Algebra Book by Gathen and Gerhard.
 
 ##Time during Summers
 
@@ -126,17 +126,18 @@ My classes start around 20th July. That might reduce the time given during weekd
 
 ##What I want to Achieve
 
-My aim through this project is to take the initial steps towards the implementation of Solvers Module for SymEngine. I basically want to set the ground so as to facilitate the porting of Sovers Module from SymPy.
+My aim through this project is to take the initial steps towards the implementation of Solvers Module for SymEngine. I basically want to set the ground so as to facilitate the porting of Solvers Module from SymPy.
 
 The most important solvers in SymPy are the Polynomial Solvers. Hence it would naturally be the first thing to implement in SymEngine. This would involve improving the Polynomial module by implementing Polynomial Manipulation algorithms such as those for
+
 - Division
 - GCD 
 - Square Free Decomposition
-- Polynomial factorisation and 
-- Galois field and arithmetics in them
+- Polynomial factorisation
+- Galois field and arithmetics in them and
 - other algorithms for finding roots of Polynomials. 
 
-Polynomial Solvers do a lot of heavy lifting in Sympy. Hence it is necessary to port them to SymEngine. I would like to focus on solving Univariate Polynomials in Galois fields(finite fields). 
+Polynomial Solvers do a lot of heavy lifting in Sympy. Hence it is necessary to port them to SymEngine. I would like to focus on implementing Division, GCD, LCM for Univariate Polynomials, factoring Univariate Polynomials in Galois fields(finite fields) and also on implementing root finding algorithms for polynomials upto degree 5( which can be used to find roots of many higher degree polynomials after they are factored ). 
 
 Other thing required is a structure to represent solutions of Polynomials. For this I aim to implement some basic functionality to represent the solution of Polynomial. Sets is what would provide this functionality.
 
@@ -160,15 +161,16 @@ other. Thus a lot of code depends on it. Also it does a lot of heavy lifting. Th
 - As regard the polynomial factoring algorithm to be implemented for Solvers of polynomials, there was a choice among two algorithms - **Berlekamp** and **Cantor-Zassenhaus**.
 >A fundamental difference between the two algorithms is that the Berlekamp algorithm is deterministic. This means that given any polynomial it will provide the unique factorisation eventually, regardless of how many steps it takes. The Cantor-Zassenhaus algorithm on the other hand is probabilistic, in that it can effectively fail to factor a polynomial completely. The tradeoff is that probabilistic factoring algorithms tend to utilise tricks that enable them to perform tasks quicker if they do succeed.
 
--Discussion also led my to believe that Sets such as `ImageSet` requiring non-trivial implementation are not required in SymEngine. They are already present in SymPy and don't take a lot of computational time. They are just for representing the solution and its better to spend the same time on the implementation of Polynomial algorithms.
+-Discussion also led my to believe that Sets such as `ImageSet` requiring non-trivial implementation are not required in SymEngine. They are already present in SymPy and don't take a lot of computational time. They are just for representing the solution and it is better to spend the same time on the implementation of Polynomial algorithms.
 
 ## The Plan
 
-1. Regarding the `Infinity` class, I've audited Sympy's `Infinity`. I've also taken a look at how [Pynac](http://pynac.org/)(backend for symbolic expression in [Sage](http://www.sagemath.org/)) does it. Its pretty interesting and I would be implementing SymEngine's Infinity along its lines.
+1. Regarding the `Infinity` class, I've audited Sympy's `Infinity`. I've also taken a look at how [Pynac](http://pynac.org/)(backend for symbolic expression in [Sage](http://www.sagemath.org/)) does it. It is pretty interesting and I would be implementing SymEngine's Infinity along its lines.
 
 2. Learning from Sympy, I propose to return Set as a solution of Solvers since Sets can be used to represent all types of solutions.
 
 Since we don't have any support for Sets, these would have to be implemented first. The output of Solve would make heavy use of a lot of functionalities of Sets. The Set capabilities we need to have
+
 - Empty Sets - Represent the solution of equation with No solutions.(`x**2 + 1 = 0`)
 - Finite Sets - Represent a finite set of discrete numbers.These would be required to represent discrete solutions such as those of Polynomials.(`x**2 = 1`)
 - Interval - Represents a real interval as a set. These are required for the representations such as range of solutions, domain of the independent variables.(`floor(x) = 0`)
@@ -199,8 +201,8 @@ Representation of Polynomials in finite fields implies that all the coefficients
 The algorithm consists mainly of exponentiation and polynomial GCD computations. It was invented by David G. Cantor and Hans Zassenhaus in 1981.
 It is arguably the dominant algorithm for solving the problem, having replaced the earlier Berlekamp's algorithm of 1967.
 
-As already mentioned above, the Cantor-Zassenhaus algorithm is a probabilistic algorithm, in that it can effectively fail to factor a polynomial completely. But its faster(than Berlekamp's algorithm) if it succeeds.<br/>
-One reason for implementing it first is the speed and the other is that its the default algorithm used in Sympy.
+As already mentioned above, the Cantor-Zassenhaus algorithm is a probabilistic algorithm, in that it can effectively fail to factor a polynomial completely. But it is faster(than Berlekamp's algorithm) if it succeeds.<br/>
+One reason for implementing it first is the speed and the other is that it is the default algorithm used in Sympy.
 Also note that the probability of the algorithm failing is low.<br/>
 Let F be a field of `q=p**n` elements, where p is prime.It uses `d*log(q)`(base2) random bits and fails to find a complete factorisation with probability no more than `(1/q)**((1−e)*d/4)` where `d` is the degree of the Polynomial and `e` is a fixed parameter between `0` and `1` which can be decided by the implementer. The failure probability is exponentially small in the number of random bits used.
 
@@ -218,10 +220,13 @@ Given a polynomial f, square–free decomposition(factorisation)[[2](http://en.w
 Square Free Decomposition itself involves succession of Greatest Common Divisor computation and exact Divisions of Polynomials. Currently SymEngine has no GCD or division algorithm for Univariate Polynomials. These would have to be implemented before we go on to implement an algorithm for Square-Free Decomposition.
 
 #### Division with Remainder
+(Works for Polynomials with Integer coefficients as well as those with **Symbolic** coefficients)<br/>
+
 Division between two polynomials `f`, `g` gives quotient `q` and remainder `r` such that `f = g*q + r` is satisfied with degree of r is less than q. I read up on the Euclidean algorithm for polynomial division. It is essentially the long division method but it works well for computers as well. But the classical division algorithm for polynomials requires `O(n^2)` operations for inputs of size n. Using reversal technique and Newton iteration, it can be improved to `O(M(n))`, where M is a multiplication time. Hence I propose to implement **Newton iteration method**<br/>
 Before implementing this I'll see how SymPy optimises it and then change the implementation process accordingly.
 
 #### GCD and LCM
+(For Polynomials with Integer and Rational coefficients)
 
 With division, GCD and LCM of polynomials can be computed. GCD is a part of a lot of algorithms involving polynomials.
 An example is<br/>
@@ -245,9 +250,9 @@ Any more details that I need to understand about this algorithm will be done alo
 
 This completes the factorisation process for polynomials. The final result we get is a set of polynomial factors. Since the degree of the resulting polynomials will be less than the original polynomial, each of these can be separately solved to find their roots. Each of the roots of these factor polynomials will be a root of the original polynomial.
 
-- I've done enough study on this algorithm and I'm pretty confident that I'll be able to tackale any problem that come my way during its implementation.
+- I've done enough study on this algorithm and I'm pretty confident that I'll be able to tackle any problem that come my way during its implementation.
 
-## Finding Roots
+## Finding Roots(For Polynomials with Integer coefficients as well as those with **Symbolic** coefficients)
 
 Finally to solve the irreducibles we get from the above process, I want to implement algorithms for finding roots of some standard polynomials such as
 - Linear(Degree = 1)
@@ -262,7 +267,7 @@ These are properly implemented in SymPy and porting the code would not be much o
 
 **Why am I including two not so related projects(namely Sets and Solver for Polynomials) in proposal?**
 
-As you will see in the Timeline the actual focus of my proposal is Polynomials. This was actually a part of my strategy for handing the complexity of the implementation process. This will be the first time I will be adding a large chunk of code to SymEngine and I believe the following method would be the best way to tackle it. Sets and Infinity are non-algorithmic. Hence I feel they will not be very hard to implement. The thing I want to learn from these is how to make design decision, how to write significant amount of new code which fits into the previously present machinery and also write such code which is maintainable in the future and can be scaled if necessary. This might also help me to learn more about the programming language. I will have 11 weeks of time after implementing this on which I can focus solely on Polynomial algorithms and their implementations not being worried about the "syntax" of programming in SymEngine. I will then be able to able to read up more and polish up my knowledge on the algorithms.
+As you will see in the Timeline the actual focus of my proposal is Polynomials. This was actually a part of my strategy for handling the complexity of the implementation process. This will be the first time I will be adding a large chunk of code to SymEngine and I believe the following method would be the best way to tackle it. Sets and Infinity are non-algorithmic. Hence I feel they will not be very hard to implement. The thing I want to learn from these is how to make design decision, how to write significant amount of new code which fits into the previously present machinery and also write such code which is maintainable in the future and can be scaled if necessary. This might also help me to learn more about the programming language. I will have 11 weeks of time after implementing this on which I can focus solely on Polynomial algorithms and their implementations not being worried about the "syntax" of programming in SymEngine. I will then be able to able to read up more and polish up my knowledge on the algorithms.
 
 **Why I am not implementing all other Set functionality SymPy has?**
 
@@ -283,21 +288,21 @@ When _direction is positive, it behaves as Positive Infinity; when negative as N
 Various other properties of Infinity will be defined such as:
 
 ```
-1. Infinity(1, -1) + Infinity(1, -1) = Infinity(1, -1)
+1. Infinity(1)(or -1) + Infinity(1)(or -1) = Infinity(1)(or -1)
 2. Infinity(0) + Infinity(0) = NaN
-3. Finite + Infinity = Infinity
-4. Infinity - Infinity = NaN
-5. PositiveFinite * Infinity(1, -1) = Infinity(1, -1)
-6. NegativeFinite * Infinity(1, -1) = Infinity(-1, 1)
-7. Infinity * Infinity = Infinity
-8. Finite / Infinity = Zero
-9. Infinity / Infinity = Nan
-10. Infinity**Zero = Nan
-11. Infinity(1, -1)**Infinity(1, -1) = Infinity(1, -1)
+3. Finite + Infinity(1)(or -1)(or 0) = Infinity(1)(or -1)(or 0)
+4. Infinity(1)(or -1)(or 0) - Infinity(1)(or -1)(or 0) = NaN
+5. PositiveFinite * Infinity(1)(or -1) = Infinity(1)(or -1)
+6. NegativeFinite * Infinity(1)(or -1) = Infinity(-1)(or 1)
+7. Infinity(1)(or -1)(or 0) * Infinity(1)(or -1)(or 0) = Infinity(1)(or -1)(or 0)
+8. Finite / Infinity(1)(or -1)(or 0) = Zero
+9. Infinity / Infinity(1)(or -1)(or 0) = Nan
+10. Infinity(1)(or -1)(or 0)**Zero = Nan
+11. Infinity(1)(or -1)**Infinity(1)(or -1) = Infinity(1)(or -1)
 12. Infinity(0)**Infinity(0) = NaN
 ```
 
-`NaN` class would follow the `SingletonPattern` with the following properties:
+`NaN` class would follow the `Singleton Pattern` with the following properties:
 
 Any more properties required for some specific functions in symengine will also be implemented as required.
 
@@ -306,24 +311,30 @@ Any more properties required for some specific functions in symengine will also 
 Using the concept of inheritance and keeping the `Sets` class as the parent class, other classes would be implemented as derived classes. 
 
 **Constructors**
+
 - `FiniteSet(const std::vector<RCP<const Basic>>)`
 
 - `Interval(const Basic start, const Basic end, bool left = false, bool right = false)`
+
 By default the interval will be closed as done in Sympy. The user will have to pass additional boolean arguments to get an open interval.
 
 - `Union(const std::vector<const Set>)`
+
 This class is used to represent union of intervals such as `Union((2,3), (4,5))` is `(2,3) U (4,5)`. This cannot be directly represented with any of the sets we talked about earlier. Also this can compute Union for more than two sets.
  
 - `Intersection(const std::vector<const Set>)`
+
 This class is used to represent Intersection of Sets. It can evaluate the intersection of more than two sets.
 
 - `Complement(const std::vector<const Set>)`
+
 Computes complement of first set with respect to all others i.e. it forms a set from those elements which are present in the first set of the vector passed but are not present in any of the other Sets
 
 - `Symmetric Difference(const std::vector<const Set>)`
+
 This also takes a vector of Sets as an input. It gives a set containing elements which are not present in the intersection of all the sets, but is present in atlease one the Sets.
 
-Sll this will be done along the lines of SymPy.
+All this will be done along the lines of SymPy.
 
 There would be many member functions for each of these classes. Some of them are:
 
@@ -333,17 +344,17 @@ There would be many member functions for each of these classes. Some of them are
 - `is_proper_subset()`
 - `is_proper_superset()`
 - `power_set()` - This involves having sets of sets. Since the input type is Basic and Set is inherited from Basic this would be possible.
-- `complement()` - This involves complement with respect to the Universal Set.(i.e
+- `complement()` - This involves complement with respect to the Universal Set.(i.e U - A)
 
 Although I think this much functionality is more than enough, but any other functionality can be developed according to needs.  
 
 **Singleton Pattern** The Singleton Design pattern is used, where only one instance of an object is needed throughout the lifetime of an application. The Singleton class is instantiated at the time of first access and same instance is used thereafter till the application quits.
 
-
-`EmptySet` recently got implemented in SymEngine but it does not follow the singleton pattern of implementation. I plan to modify the implementation so that `EmptySet` becomes a Singleton.
+- `EmptySet` recently got implemented in SymEngine but it does not follow the singleton pattern of implementation. I plan to modify the implementation so that `EmptySet` becomes a Singleton.
 
 - `Universal Set` - This would also follow the `Singleton` pattern. It is usually not directly used but rather used while taking intersections and complements. Some properties would then be defined accordingly.
 For e.g.
+
 ```
 A Universal Set `U`
 A Finite Set `F`
@@ -355,6 +366,7 @@ F.complement() = U - F
 ```
 
 There are some special Sets to be implemented:
+
 - `Natural` 
 - `Whole Numbers` 
 - `Integer`
@@ -374,55 +386,87 @@ I will also see if this can be improved somehow for Squaring of polynomials.
 
 Sympy has a special file for Galois field (`galoistools.py`) which contains arithmetics for algebraic computations over a Galois field. Some of these functions will have to be ported to SymEngine.<br/>
 The functions to be ported include:
+
 - `gf_from_int_poly` - Create a `GF(p)[x]` polynomial from `Z[x]`( i.e. It represent the polynomial in the Galois field)<br/>
+
 The declaration would be 
-```gf_from_int_poly(const UnivariateIntPoly &a, const Integer p)```
+```cpp
+gf_from_int_poly(const UnivariateIntPoly &a, const Integer p)
+```
 
 We can also have a function like
-```gf_from_vector(const std::vector<int> &a, const Integer p)```
+```cpp
+gf_from_vector(const std::vector<int> &a, const Integer p)
+```
 
 Now we require functions for addition, subtraction, multiplication, division, power, negation, squaring(can be used for exponentiation over the finite field) etc.
 
 Most of the algorithms involve simple modular arithmetics.
 The corresponding functions for the required computations are
 
-```UnivariateIntPolynomial gf_add(const UnivariateIntPolynomial &f, const UnivariateIntPolynomial &g, const Integer p)```
+```cpp
+UnivariateIntPolynomial gf_add(const UnivariateIntPolynomial &f, const UnivariateIntPolynomial &g, const Integer p)
+```
 Add polynomials in `GF(p)[x]`.
 
-```UnivariateIntPolynomial gf_sub(const UnivariateIntPolynomial &f, const UnivariateIntPolynomial &g, const Integer p)```
+```cpp
+UnivariateIntPolynomial gf_sub(const UnivariateIntPolynomial &f, const UnivariateIntPolynomial &g, const Integer p)
+```
 Subtracts polynomials in `GF(p)[x]`.
 
-```UnivariateIntPolynomial gf_neg(const UnivariateIntPolynomial &f, const Integer p)```
+```cpp
+UnivariateIntPolynomial gf_neg(const UnivariateIntPolynomial &f, const Integer p)
+```
 Negate a polynomial in `GF(p)[x]`.
 
-```UnivariateIntPolynomial gf_mul(const UnivariateIntPolynomial &f, const UnivariateIntPolynomial &g, const Integer p)```
+```cpp
+UnivariateIntPolynomial gf_mul(const UnivariateIntPolynomial &f, const UnivariateIntPolynomial &g, const Integer p)
+```
 Multiplies polynomials in `GF(p)[x]`.
 
-```UnivariateIntPolynomial gf_sqr(const UnivariateIntPolynomial &f, const Integer p)```
+```cpp
+UnivariateIntPolynomial gf_sqr(const UnivariateIntPolynomial &f, const Integer p)
+```
 Squares polynomials in `GF(p)[x]`.
 
-```UnivariateIntPolynomial gf_div(const UnivariateIntPolynomial &f, const UnivariateIntPolynomial &g, const Integer p)```
+```cpp
+UnivariateIntPolynomial gf_div(const UnivariateIntPolynomial &f, const UnivariateIntPolynomial &g, const Integer p)
+```
 Division with remainder in `GF(p)[x]`.
 
-```UnivariateIntPolynomial gf_pow(const UnivariateIntPolynomial &f,const Integer n, const Integer p)```
+```cpp
+UnivariateIntPolynomial gf_pow(const UnivariateIntPolynomial &f,const Integer n, const Integer p)
+```
 Compute `f**n` in `GF(p)[x]` by repeated squaring.
 
-```UnivariateIntPolynomial gf_gcd(const UnivariateIntPolynomial &f, const UnivariateIntPolynomial &g, const Integer p)```
+```cpp
+UnivariateIntPolynomial gf_gcd(const UnivariateIntPolynomial &f, const UnivariateIntPolynomial &g, const Integer p)
+```
 Computes GCD of polynomials in `GF(p)[x]` by Euclidean-Algorithm(explained under GCD)
 
-```UnivariateIntPolynomial gf_lcm(const UnivariateIntPolynomial &f, const UnivariateIntPolynomial &g, const Integer p)```
+```cpp
+UnivariateIntPolynomial gf_lcm(const UnivariateIntPolynomial &f, const UnivariateIntPolynomial &g, const Integer p)
+```
 Computes LCM in `GF(p)[x]`. This function is dependent on the GCD, multiplication and division functions.
 
-```UnivariateIntPolynomial gf_diff(const UnivariateIntPolynomial &f, const Integer p)```
+```cpp
+UnivariateIntPolynomial gf_diff(const UnivariateIntPolynomial &f, const Integer p)
+```
 Differentiate a polynomial in `GF(p)[x]`. This would be required in Square-Free decomposition of the polynomial which is a part of the factorisation process.
 
-```UnivariateIntPolynomial gf_random(const Integer n, const Integer p)```
+```cpp
+UnivariateIntPolynomial gf_random(const Integer n, const Integer p)
+```
 Creates a random polynomial in `GF(p)[x]` on degree n. This is required for Equal-Degree factorisation which is a part of Cantor-Zassenhaus algorithm for factorisation.
 
-```UnivariateIntPolynomial gf_irreducible_p(const UnivariateIntPolynomial &f, const Integer p)```
+```cpp
+UnivariateIntPolynomial gf_irreducible_p(const UnivariateIntPolynomial &f, const Integer p)
+```
 This will be used to check if the final result of factorisation is irreducible in `GF(p)[x]`.
 
-```UnivariateIntPolynomial gf_sqf_p(const UnivariateIntPolynomial &f, const Integer p)```
+```cpp
+UnivariateIntPolynomial gf_sqf_p(const UnivariateIntPolynomial &f, const Integer p)
+```
 This would be used to check if a polynomial is square-free in `GF(p)[x]`.
 
 ### Division
@@ -432,7 +476,7 @@ For every pair of polynomials (A, B) such that B ≠ 0, polynomial division prov
 The process of getting the uniquely defined polynomials Q and R from A and B is called Euclidean division (sometimes division transformation). Polynomial long division is thus an algorithm for Euclidean division.
 
 The pseudo-code is as follows
-```
+```cpp
 q = 0;
 r = A;
 r = degree(b);
@@ -456,7 +500,10 @@ The details of Newton's Iteration Method can be seen [this](https://www.student.
 
 A very simple algorithm for finding GCD of Polynomials is the Euclidean Algorithm.
 Starting from two polynomials a and b, Euclid's algorithm consists of recursively replacing the pair (a, b) by (b, rem(a, b)) (where "rem(a, b)" denotes the remainder of the Euclidean division, computed by the algorithm of the preceding section), until b = 0. The GCD is the last non zero remainder.
-<br/>Recursively saying ```gcd(a,b):= if b=0 then a else gcd(b, rem(a,b))```
+<br/>Recursively saying 
+```cpp
+gcd(a,b):= if b=0 then a else gcd(b, rem(a,b))
+```
 This is the algorithm currently used by SymPy for GCD over Galois field.
 
 Some other algorithms for exploration are<br/>
@@ -475,10 +522,11 @@ For Square-Free factorisation I propose to use the fast algorithm of Yun.<br/>
 The cost of computing square–free decomposition is equivalent to the computation of the greatest common divisor of f and its derivative. Thus this is dependent on the GCD algorithm.
 
 **Input:** A monic polynomial f
+
 **Output:** Square-free factorisation of f
 
 **Working Principle**
-```
+```cpp
 a_0 = gcd(f, f');   b_1 = f/a_0;   c_1 = f'/a_0;   d_1 = c_1 - b_1';   i = 1;
 
 iterate 
@@ -518,9 +566,9 @@ Thus we are finding one factor in each iteration.
 
 ### Equal Degree Factorisation
 
-This is the where the heart of Cantor-Zassenhaus algorithm lies. This is the step which makes the algorithm probablistic in the sense that it depends on a randomly chosen polynomial.
+This is the where the heart of Cantor-Zassenhaus algorithm lies. This is the step which makes the algorithm probabilistic in the sense that it depends on a randomly chosen polynomial.
 
-**Input:** A squarefree monic polynomial f ∈ Fq[x] of degree n > 0, where q is an odd prime power, and a divisor d < n of n, so that all irreducible factors of f have degree d.
+**Input:** A square-free monic polynomial f ∈ Fq[x] of degree n > 0, where q is an odd prime power, and a divisor d < n of n, so that all irreducible factors of f have degree d.
 
 **Output:** A proper monic factor g ∈ Fq[x] of f , or “failure”.
 
@@ -553,7 +601,7 @@ The algorithm is very direct. `ax + b` is solved to give `x = -b/a`. Any simplif
 Finding roots of quadratic polynomials simply uses the Quadratic Formula.
 
 - **Cubic**(Degree = 3)<br/>
-The solutions for cubics can also be found using a general formula. Thats exactly how sympy does it and how I'm planning to implement it. For reference see [General Formula for Roots of Cubic](https://en.wikipedia.org/wiki/Cubic_function#General_formula_for_roots)
+The solutions for cubics can also be found using a general formula. That's exactly how sympy does it and how I'm planning to implement it. For reference see [General Formula for Roots of Cubic](https://en.wikipedia.org/wiki/Cubic_function#General_formula_for_roots)
 
 - **Quartic**(Degree = 4)<br/>
 Quartics are relatively hard to solve and have harder algorithms as compared to the polynomials above. For quartics I plan to implement the famous Descartes-Euler algorithm.
@@ -574,12 +622,12 @@ Here is the [wiki page](https://en.wikipedia.org/wiki/Quintic_function#Finding_r
 
 - **Binomial**<br/>
 Binomials are the simplest polynomials after monomials. The roots can easily be expressed in terms of the coefficients of the binomial. This will be useful to all the above algorithms and hence I will be implementing this after Linear and before Quadratic polynomials.<br/>
-For e.g. The polynomial 'ax**5 + bx` has solutions as `x=0` and the solutions of `x**4 = -b/a`. `x**n = constant` equations can be easily solved to find real and compex roots and require no specific named algorithm. 
+For e.g. The polynomial 'ax**5 + bx` has solutions as `x=0` and the solutions of `x**4 = -b/a`. `x**n = constant` equations can be easily solved to find real and complex roots and require no specific named algorithm. 
 
 - **Cyclotomic Polynomials**
 For a given polynomial which is nth cyclotomic, first of all we need to know what `n` is for the given polynomial. This requires finding the inverse totient of the degree of the polynomial. Since Euler's Totient is not a one-one function the inverse is an interval rather than a single number.<br/>
 For calculating this interval a `_inverse_totient_estimate()` function will be defined. Then we loop over the interval comparing the original polynomial to each cyclotomic polynomial in that interval.<br/>
-After this is done, calculating the roots is straight forward.Each root is `exp(k*d)` where `d=2*pi*I/n` and 
+After this is done, calculating the roots is straightforward.Each root is `exp(k*d)` where `d=2*pi*I/n` and 
 `1 <= k <= n` and `n` and `k` are co-prime.
 
 - All these would require some common Helper functions which will have to be implemented.
@@ -644,18 +692,18 @@ RCP<const Set> fs5 = complement({fs1, in2});
 ```
 
 **Symmetric Difference**
-```
+```cpp
 RCP<const Set> fs6 = symmetricDifference({fs1, fs2});
 ```
 
 **Other Functionality**
-```
+```cpp
 bool a = fs1.is_subset(in1);
 bool b = in1.is_disjoint(in2);
 ```
 
 After the above operations,
-```
+```cpp
 in3 = [1, 5]
 fs3 = {1, 2, 3, 4, 5, 6}
 in4 = [1, 5] U {6}
@@ -673,7 +721,19 @@ b = false
 
 
 **UnivariateIntPolynomial**(Division, GCD and LCM)
-```
+```cpp
+RCP<const Symbol> x  = symbol("x");
+Expression a(symbol("a"));
+Expression b(symbol("b"));
+Expression c(symbol("c"));
+
+RCP<UnivariatePolynomial> PExp = univariate_polynomial(x, 2,{{0, c}, {1, b}, {2, a}}); 
+//ax**2 + bx + c
+RCP<UnivariatePolynomial> QExp = UnivariatePolynomial::create(x,{2,3}); // 3x + 2
+
+std::vector<UnivariatePolynomial> RExp = PExp->div_poly(QExp);
+// RExp = {a*x/3 + b/3 - 2*a/9, 4*a/9 - 2*b/3 + c}
+
 RCP<UnivariateIntPolynomial> P = univariate_int_polynomial(x, {{0, 1_z}, {1, 1_z}, {3, 1_z}});
 RCP<UnivariateIntPolynomial> Q = univariate_int_polynomial(x, {{1, 1_z}, {2, 1_z}});
 
@@ -692,7 +752,7 @@ UnivariateIntPolynomial L = P->lcm(Q);
 
 **Galois Field**
 
-```
+```cpp
 RCP<const Symbol> x  = symbol("x");
 RCP<const UnivariateIntPolynomial> P = univariate_int_polynomial(x, {{0, 5_z}, {1, 2_z}, {2, 3_z}});
 const UnivariateIntPolynomial fa = gf_from_int_poly(P, 5); // fa = 3x**2 + 2x
@@ -728,7 +788,7 @@ bool b3 = gf_irreducible_p(x+1, 3) // b3 = true(x + 1 can't be factored further)
 
 **Factorisation**
 
-```
+```cpp
 RCP<const Symbol> x  = symbol("x");
 RCP<const UnivariateIntPolynomial> P = univariate_int_polynomial(x, {{0, 1_z}, {1, 1_z}, {2, 1_z}, {3, 1_z}});
 std::vector<const UnivariateIntPolynomial> V = P.factor(1, 5); // V = {x + 1, x + 2, x + 3}
@@ -736,7 +796,7 @@ std::vector<const UnivariateIntPolynomial> V = P.factor(1, 5); // V = {x + 1, x 
 
 **Finding Roots**
 
-```
+```cpp
 RCP<const Symbol> x  = symbol("x");
 RCP<const UnivariateIntPolynomial> P1 = univariate_int_polynomial(x, {{0, 2_z}, {1, 1_z}); // Linear
 RCP<const Set> fs1 = P1.roots(); // fs = {-2} // A FiniteSet
@@ -870,10 +930,10 @@ I would continue contributing to the community. I plan to take GSoC project as a
 I'll be maintaining a blog at [codemaxx.github.io](codemaxx.github.io) to record my progress each week so that the community can keep track of my work and also give their opinion on it.
 
 ##References
-1. Gitter Chat with @isuruf @rwst @Sumith1896
+1. [Gitter Chat with @isuruf @rwst @Sumith1896](https://gitter.im/symengine/symengine)
 2. [Discussion on Mailing list - SymEngine](https://groups.google.com/forum/#!topic/symengine/O3khMce0G7Q) 
 3. [Discussion on mailing list SymPy](https://groups.google.com/forum/#!topic/sympy/GFws460zHrM)
-4. [Modern Computer Algebra Book](https://drive.google.com/file/d/0BzO2PqynA0ihbmZKLWdLenkyX00/view?pref=2&pli=1)
+4. Modern Computer Algebra Book by Gathen and Gerhard
 5. [Square-free Polynomial](https://en.wikipedia.org/wiki/Square-free_polynomial) - [Yun's Algorithm](https://en.wikipedia.org/wiki/Square-free_polynomial#Yun.27s_algorithm)
 6. [Cantor-Zassenhaus Algorithm](https://en.wikipedia.org/wiki/Cantor%E2%80%93Zassenhaus_algorithm)
 7. [Berlekamp Algorithm](https://en.wikipedia.org/wiki/Berlekamp%27s_algorithm)
